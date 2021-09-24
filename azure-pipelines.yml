@@ -10,6 +10,7 @@ trigger:
       - dev
       - master
       - v4
+      - shreyas-gopalakrishna/fix/vulnerability-netty
 pr:
   branches:
     include:
