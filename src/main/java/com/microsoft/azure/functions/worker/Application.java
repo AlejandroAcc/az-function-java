@@ -3,6 +3,7 @@ package com.microsoft.azure.functions.worker;
 import java.util.logging.*;
 import javax.annotation.*;
 
+import com.microsoft.azure.functions.worker.handler.GracefulTerminationException;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -122,6 +123,9 @@ public final class Application implements IApplication {
         } else {
             try (JavaWorkerClient client = new JavaWorkerClient(app)) {
                 client.listen(app.getWorkerId(), app.getRequestId()).get();
+            } catch (GracefulTerminationException ex) {
+                WorkerLogManager.getSystemLogger().log(Level.INFO, "Gracefully shutting down the worker.");
+                System.exit(0);
             } catch (Exception ex) {
                 WorkerLogManager.getSystemLogger().log(Level.SEVERE, ExceptionUtils.getRootCauseMessage(ex), ex);
                 System.exit(-1);
